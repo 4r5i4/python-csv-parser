@@ -4,8 +4,13 @@ import sys
 import keyboard
 import re
 import unittest
+import datetime
 # ^(\d+|\w+),([A-Z]\w{2}).*(AM|PM)
 # ^(\d+)(.*)^[,]$
+
+
+# datetime regex made here: https://regex101.com/
+# \s?([A-Z]\w{2})\s+?(\d+)\s+?(\d+)\s+?(\d+):(\d+):(\d+):(\d+)(AM|PM)
 
 
 """
@@ -14,14 +19,23 @@ https://stackoverflow.com/questions/18144431/regex-to-split-a-csv
 """
 
 """
--get column size
--skip the first (size) elements
-then grab every (size) element as you go
+x-get column size
+x-skip the first (size) elements
+x then grab every (size) element as you go
 
 BONOUS: as you go, check for datetime regex
 
--insert into db
--assignment of dict key values
+
+-sorting: option 1
+    -done reading
+    -insert into db
+    -sort
+    -read back from db
+
+-sorting: option 2:
+    lambda
+
+x-assignment of dict key values
 
 
 """
@@ -30,11 +44,11 @@ BONOUS: as you go, check for datetime regex
 def _open_file():
     # TODO: must use sys.argv and use correct path
     # TODO: exception handling for corrupt file or wrong format
-    f = open("./CSV/test2.csv", "r")
+    f = open("./CSV/test.csv", "r")
     return f
 
 
-def _get_heading_and_colSize():
+def _get_headings_and_colSize():
     f = _open_file()
     if f.mode == "r":
         heading = f.readline().split(',')
@@ -53,10 +67,26 @@ def _optional_print_all_data(data):
     for index, value in enumerate(data):
         print('\nindex[', index+1, ']value: ', value)
 
+def _find_datetime_regex(data):
+    regex = r"\s?([A-Z]\w{2})\s+?(\d+)\s+?(\d+)\s+?(\d+):(\d+):(\d+):(\d+)(AM|PM)"
+    matches = re.search(regex, data)
+    if(matches):        
+        print(matches.group())
+        convert_dates_to_datetime(matches.group())
+        # print ("Match was found at {start}-{end}: {match}".format(start = matches.start(), end = matches.end(), match = matches.group()))
+        # for groupNum in range(0, len(matches.groups())):
+        #     groupNum = groupNum + 1
+        #     print ("Group {groupNum} found at {start}-{end}: {group}".format(groupNum = groupNum, start = matches.start(groupNum), end = matches.end(groupNum), group = matches.group(groupNum)))
+    return matches
+
+
+def convert_dates_to_datetime(some_date):
+    datetime_format = '%b %d %Y  %I:%M:%S:%f%p'
+    formatted_date = datetime.datetime.strptime(some_date, datetime_format)
+    print(formatted_date)
 
 def read_csv():
-
-    (col_size, headings) = _get_heading_and_colSize()
+    (col_size, headings) = _get_headings_and_colSize()
     f = _open_file()
     if f.mode == "r":
         new_data = re.findall(
@@ -73,6 +103,13 @@ def read_csv():
         for h in headings:
             if(len(dic) != len(headings)):
                 if(i < len(new_data)):
+                    matches = _find_datetime_regex(new_data[i])
+                    # matches = re.search(regex, new_data[i])
+                        # print(matches.group())
+                        # print ("Match was found at {start}-{end}: {match}".format(start = matches.start(), end = matches.end(), match = matches.group()))
+                        # for groupNum in range(0, len(matches.groups())):
+                        #     groupNum = groupNum + 1
+                        #     print ("Group {groupNum} found at {start}-{end}: {group}".format(groupNum = groupNum, start = matches.start(groupNum), end = matches.end(groupNum), group = matches.group(groupNum)))
                     dic[h] = new_data[i]
                     i = i + 1
             count = count + 1
