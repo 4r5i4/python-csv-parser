@@ -27,8 +27,13 @@ BONOUS: as you go, check for datetime regex
 """
 
 
+def _open_file():
+    f = open("./CSV/test2.csv", "r")
+    return f
+
+
 def _get_heading_and_colSize():
-    f = open("./CSV/test.csv", "r")
+    f = _open_file()
     if f.mode == "r":
         heading = f.readline().split(',')
         # _optional_print_headings()
@@ -53,7 +58,7 @@ def _optional_print_all_data(data):
 def read_csv():
 
     (col_size, headings) = _get_heading_and_colSize()
-    f = open("./CSV/test.csv", "r")
+    f = _open_file()
     if f.mode == "r":
         new_data = re.findall(
             "(?:,|\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\n]*|(?:\n|$))", f.read())
@@ -63,42 +68,22 @@ def read_csv():
         # data = (re.split('\r\n', f.read().decode('utf-8')))
         # new_data = re.findall("[^\"][^\r\n][^\"][^\r\n].*", f.read())
     f.close()
-    # new_dict = {}
-    # obj = []
-    # d1 = {'heading: data', 'ff: 5'}
-    # d2 = {'dd: 2', 'jj: 6'}
-    # d3 = {'cc: 3', 'bb: 4'}
-    # obj.append(d1)
-    # obj.append(d2)
-    # obj.append(d3)
-    # print('object is ', obj)
-    # for i in range(col_size):
-    #     obj.append(
-    #         for j in
-    #     )
-    # for i in range(len(new_data)):
-    # for data in new_data:
-    #     for i in range(10):
-    #         print(data)
 
-    # floor the num of rows
     row_size = int(len(new_data)/col_size)
     # print('row size is :', row_size)
-    dic = {}
+    # dic = {}
     obj = []
     i = col_size
-    print(type(new_data))
-    print('length of new_data is:', len(new_data))
+    # print(type(new_data))
+    # print('length of new_data is:', len(new_data))
     # for i, value in enumerate(new_data):
     #     print(i, value)
-
-    # -1 to ignore the EOF char
     for r in range(row_size-1):
         count = 0
         dic = {}
         for h in headings:
             if(len(dic) != len(headings)):
-                if(i<len(new_data)):
+                if(i < len(new_data)):
                     dic[h] = new_data[i]
                     i = i + 1
             count = count + 1
@@ -108,12 +93,12 @@ def read_csv():
     for index, value in enumerate(obj):
         print(index+1, value)
 
-            # print('\n\nindex:', i)
-            # dic[h] = new_data[i]
-            # obj.append(dic)
-            # print('index[', i, ']: ', new_data[i])
-            # dic[h] = new_data[i]
-            # print('printing dic before appending:', dic)
+        # print('\n\nindex:', i)
+        # dic[h] = new_data[i]
+        # obj.append(dic)
+        # print('index[', i, ']: ', new_data[i])
+        # dic[h] = new_data[i]
+        # print('printing dic before appending:', dic)
         # print(obj)
     # for index, value in enumerate(obj):
     #     print(index, value)
@@ -126,12 +111,10 @@ def read_csv():
     # for index, value in enumerate(obj):
     #     print(index, value)
 
-    file = open("testfile.txt", "w")
     # for i in range(10):
     #     for data in (new_data):
     #         print(data)
     #         file.write(data)
-    file.close()
 
     # for j in range(col_size):
     #     new_dict[headings[j]] =
