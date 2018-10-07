@@ -28,6 +28,8 @@ BONOUS: as you go, check for datetime regex
 
 
 def _open_file():
+    # TODO: must use sys.argv and use correct path
+    # TODO: exception handling for corrupt file or wrong format
     f = open("./CSV/test2.csv", "r")
     return f
 
@@ -36,23 +38,20 @@ def _get_heading_and_colSize():
     f = _open_file()
     if f.mode == "r":
         heading = f.readline().split(',')
-        # _optional_print_headings()
         col_size = len(heading)
     f.close()
     return (col_size, heading)
 
 
 def _optional_print_headings(data):
-    print('\n\n\n\nheading is', data)
+    """optional, for development"""
+    print('\nHeading is', data)
 
 
 def _optional_print_all_data(data):
+    """optional, for development"""
     for index, value in enumerate(data):
         print('\nindex[', index+1, ']value: ', value)
-
-# def _next_data_point(index):
-#     # checking for index bounds
-#     result = (index < len(new_data))
 
 
 def read_csv():
@@ -62,22 +61,12 @@ def read_csv():
     if f.mode == "r":
         new_data = re.findall(
             "(?:,|\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\n]*|(?:\n|$))", f.read())
-
-        # _optional_print_all_data()
-
-        # data = (re.split('\r\n', f.read().decode('utf-8')))
-        # new_data = re.findall("[^\"][^\r\n][^\"][^\r\n].*", f.read())
     f.close()
 
     row_size = int(len(new_data)/col_size)
-    # print('row size is :', row_size)
-    # dic = {}
     obj = []
     i = col_size
-    # print(type(new_data))
-    # print('length of new_data is:', len(new_data))
-    # for i, value in enumerate(new_data):
-    #     print(i, value)
+
     for r in range(row_size-1):
         count = 0
         dic = {}
@@ -87,80 +76,10 @@ def read_csv():
                     dic[h] = new_data[i]
                     i = i + 1
             count = count + 1
-        # print((dic))
         obj.append(dic)
 
     for index, value in enumerate(obj):
         print(index+1, value)
-
-        # print('\n\nindex:', i)
-        # dic[h] = new_data[i]
-        # obj.append(dic)
-        # print('index[', i, ']: ', new_data[i])
-        # dic[h] = new_data[i]
-        # print('printing dic before appending:', dic)
-        # print(obj)
-    # for index, value in enumerate(obj):
-    #     print(index, value)
-
-    #         # print('row unmber ', r+1, ':', h)
-    #         # dic[h] = None
-    #         # dic[h] = _next_data_point(i)
-    #         # i = i + 1
-
-    # for index, value in enumerate(obj):
-    #     print(index, value)
-
-    # for i in range(10):
-    #     for data in (new_data):
-    #         print(data)
-    #         file.write(data)
-
-    # for j in range(col_size):
-    #     new_dict[headings[j]] =
-
-    # new_data = f.read().replace('"\n', '\n').replace(',\n', ',')
-    # data = ((new_data).rsplit('\n'))
-
-    # new_data = f.read().replace('\n', '*******').replace(',*******', ',')
-    # new_data = f.read()
-    # new_data = re.findall(
-    #     "(?:,|\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\n]*|(?:\n|$))", f.read())
-    # for index, value in enumerate(new_data):
-    #     print('\nindex[', index+1, ']value: ', value)
-    # line = re.sub('[\d]', '&', new_data)
-    # print(line)
-    # print(data)
-    # for i in range(10):
-    #     print(i)  # 0, 1, 2, ..., 9
-
-    # get size of heading
-
-    # dict = {}
-    # for i in range(col_size):
-    #     print('index', i)
-    #     dict[heading[i]] = None
-    # print(dict)
-    # new_data = f.read().replace(',\n', '____').replace(
-    #     '"\n', '*****').replace('\n', ',')
-    # data = new_data.replace('*****', '\n')
-    # data_er = data.split('\n')
-    # for i in data_er:
-    #     print('\n\n>>>>>',  i)
-    # print(new_data)
-    # for i in data:
-    #     print('>>>>>>>___:      ', i)
-
-    # print(lines[2])
-    # rows = f.read().splitline('"\r\n')
-    # heading = f.readline()
-    # print('heading is ', heading)
-    # line = rows[1].strip('\n\r')
-    # print(line)
-    # print(rows)
-    # print(re.split('; |, |,, |\r\n', rows[1]))
-    # print(rows[1])
-    # print(rows[1])
 
 
 def runtime_arg_check(arg_length):
