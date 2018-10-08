@@ -3,10 +3,7 @@
     credit: Arsia Ardalan
     repo: https://github.com/ArsiaArdalan/python-csv-parser
 """
-import sys
-import keyboard
 import re
-import unittest
 import datetime
 from operator import itemgetter
 
