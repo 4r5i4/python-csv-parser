@@ -42,7 +42,14 @@ def _sort_date_make_model(filepath, data):
     # check to see if three headings date, make, model exist?
     (col, headings) = _get_headings_and_colSize(filepath)
     target_cols = ['entrydate', 'make', 'model']
-    new_list = data
+
+    temp_obj = {}
+
+    # we want to sort based on year only.
+    for d in data:
+        d['entrydate'] = d['entrydate'].year
+
+    result = temp_obj
     count = 0
     # don't check anything if we don't have at least the three columns (as per requirement in the assessment: year, make, model)
     # TODO: perhaps ask team what the requirement is for lowercase and UPPERCASE sorting?
@@ -55,13 +62,13 @@ def _sort_date_make_model(filepath, data):
             # Confirm that we indeed sorted
             print(
                 '! Note: Data sorted based on all three columns date, make, model :')
-            new_list = sorted(data, key=itemgetter(
+            result = sorted(data, key=itemgetter(
                 'entrydate', 'make', 'model'))
-            return new_list
+            return result
     else:
         # Confirm that we didn't have all three columns to sort
         print('! Note: data not sortable... printing as is:')
-        return new_list
+        return result
 
 
 def _get_headings_and_colSize(filepath):
@@ -112,7 +119,7 @@ def _print_basic_info(obj):
             make=value['make'],
             model=value['model'],
             index=index,
-            year=(value['entrydate']).year)
+            year=(value['entrydate']))
         )
 
 
@@ -174,11 +181,16 @@ def read_csv(filepath):
             count = count + 1
         obj.append(dic)
 
+    # This obj ^^^^ has entrydate as the datetime obj with all it's parts
+
+    # To sort the object based only on the year, I had to preserve the year portion of the datetime
+    # object and eliminate the rest, i.e. Nov 15 2004 13:12:111AM becomes 2004
+
     # sorting the object
-    obj = _sort_date_make_model(filepath, obj)
+    sorted_obj = _sort_date_make_model(filepath, obj)
 
     # Printing some basic info
-    _print_basic_info(obj)
+    _print_basic_info(sorted_obj)
 
 
 def main():
