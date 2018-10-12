@@ -115,10 +115,10 @@ def _print_basic_info(obj):
         Prints some keys and values
     """
     for index, value in enumerate(obj):
-        print('Row[{index}] : {year}, {make}, {model}'.format(
+        print('[{index}] : {year}, {make}, {model}'.format(
             make=value['make'],
             model=value['model'],
-            index=index,
+            index=index+1,
             year=(value['entrydate']))
         )
 
