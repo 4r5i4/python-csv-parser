@@ -30,52 +30,44 @@ def _open_file(filepath):
         return f
 
 
-def _sort_date_make_model(filepath, data):
+def _sort_date_make_model(filepath, data, headings):
     """
         -args: 
-            filepath
+            filepath, used to stamp the result for respective CSV file
             data, dictionary of lists, processed data
+            headings, list of columns (headings)   
         -returns: sorted dictionary based on columns
         Checks to see if columns of interest are in the file
         If so, returns a sorted dictionary based on the specified columns, if not, returns the unsorted dictionary 
     """
-    # check to see if three headings date, make, model exist?
-    (col, headings) = _get_headings_and_colSize(filepath)
-    target_cols = ['entrydate', 'make', 'model']
 
-    temp_obj = {}
+    # If we wanto to sort based on year of entrydate:
+    # sortable_columns = ['entrydate', 'make', 'model']
+    # for d in data:
+    #     d['entrydate'] = d['entrydate'].year
 
-    # we want to sort based on year only.
-    for d in data:
-        d['entrydate'] = d['entrydate'].year
+    result = {}
+    sortable_columns = ['year', 'make', 'model']
 
-    result = temp_obj
-    count = 0
-    # don't check anything if we don't have at least the three columns (as per requirement in the assessment: year, make, model)
-    # TODO: perhaps ask team what the requirement is for lowercase and UPPERCASE sorting?
-    if(col >= 3):
-        for t in target_cols:
-            if t in headings:
-                count = count + 1
-        if(count == 3):
-            print(f'\n\nResult for {filepath}')
-            # Confirm that we indeed sorted
-            print(
-                '! Note: Data sorted based on all three columns date, make, model :')
-            result = sorted(data, key=itemgetter(
-                'entrydate', 'make', 'model'))
-            return result
-    else:
-        # Confirm that we didn't have all three columns to sort
-        print('! Note: data not sortable... printing as is:')
+    """ check if we have all the columns needed for sorting """
+    sortFlag = all(elem in headings for elem in sortable_columns)
+
+    print(f'\n\nResult for {filepath}')
+    if(sortFlag):
+        """ we can sort """
+        print('DATA SORTED:')
+        result = sorted(data, key=itemgetter('year', 'make', 'model'))
         return result
+    else:
+        """ we don't have all the columns, return the obj unsorted """
+        print('DATA CANNOT BE SORTED:')
+        return data
 
 
-def _get_headings_and_colSize(filepath):
+def _get_headings(filepath):
     """
         -args: filepath
-        -returns: tuple 
-            col_size: integer, size of columns
+        -returns:
             headings: list of strings, column headings
         Opens the file, reads the very first line, splits on comma and returns a tuple. 
     """
@@ -85,9 +77,8 @@ def _get_headings_and_colSize(filepath):
         raw_headings = f.readline().split(',')
         for h in raw_headings:
             headings.append(h.strip())
-        col_size = len(headings)
     f.close()
-    return (col_size, headings)
+    return headings
 
 
 def _find_datetime_regex(data):
@@ -119,7 +110,7 @@ def _print_basic_info(obj):
             make=value['make'],
             model=value['model'],
             index=index+1,
-            year=(value['entrydate']))
+            year=(value['year']))
         )
 
 
@@ -146,7 +137,8 @@ def read_csv(filepath):
         For the number of calculated rows, adds data to a dictionary and appends to the obj list
     """
 
-    (col_size, headings) = _get_headings_and_colSize(filepath)
+    headings = _get_headings(filepath)
+    col_size = len(headings)
     f = _open_file(filepath)
     if f.mode == "r":
         new_data = re.findall(
@@ -155,8 +147,6 @@ def read_csv(filepath):
 
     # -1 for EOF
     row_size = int(len(new_data)/col_size) - 1
-
-    # refraining from using 'object': python class
     obj = []
 
     # i = col_size in order to skip the headings
@@ -181,13 +171,8 @@ def read_csv(filepath):
             count = count + 1
         obj.append(dic)
 
-    # This obj ^^^^ has entrydate as the datetime obj with all it's parts
-
-    # To sort the object based only on the year, I had to preserve the year portion of the datetime
-    # object and eliminate the rest, i.e. Nov 15 2004 13:12:111AM becomes 2004
-
     # sorting the object
-    sorted_obj = _sort_date_make_model(filepath, obj)
+    sorted_obj = _sort_date_make_model(filepath, obj, headings)
 
     # Printing some basic info
     _print_basic_info(sorted_obj)
